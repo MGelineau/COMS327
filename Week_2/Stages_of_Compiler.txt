@@ -1,0 +1,17 @@
+#PREPROCESSOR   
+gcc -E file.c//Runs preprocessor alone
+
+#COMPILING
+//change code to assembly
+gcc -S file.c
+ls -l
+less file.c
+
+#ASSEMBLING
+//creates us a binary file
+gcc file.c -c
+hexdump file.o|less
+
+#LINKING
+//ties everything together
+gcc random.c
