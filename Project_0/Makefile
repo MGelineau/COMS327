@@ -1,0 +1,2 @@
+The_Knights_Tour_Proj0:	The_Knights_Tour_Proj0.c
+	gcc The_Knights_Tour_Proj0.c -o The_Knights_Tour_Proj0

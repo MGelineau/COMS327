@@ -22,4 +22,9 @@ int main(int argc, char *argv[])
 /*
  *gcc recursion.c -o recursion
  *./recursion 1,2,3 ...etc
+ *
+ * SUBMISSION:
+ * Makefile
+ * make
+ * 
  */

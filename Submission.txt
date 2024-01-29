@@ -1,0 +1,22 @@
+#README is a textfile
+#shows how to run code if anything special is done to it
+#if there's a bug tell them
+#CHANGELOG (not needed for this assignment)
+	Contains:
+		date and timme: what youve done
+		github gives these
+
+	git log > CHANGELOG
+
+#To package for submission
+#make clean
+#cd ..
+# cp  -r <directory name> <new name>
+#tar cvf <directory name>.tar <name of directory>
+#gzip -9 <directory name>.tar
+#c-create  v- verbose f-force gz - zip
+
+#mkdir tmp
+#cd tmp
+#tar xvfz ../<directory name>.tar.gz
+#rm -rf tmp (DELETES DIRECTORY) (DONT PUT A .)
