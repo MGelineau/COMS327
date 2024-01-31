@@ -1,0 +1,19 @@
+Author: Mgelineau <gelineau1234321@gmail.com>
+Date:   Wed Jan 31 13:51:42 2024 -0600
+
+    added in random generation of boulders and trees.
+
+Author: Mgelineau <gelineau1234321@gmail.com>
+Date:   Wed Jan 31 11:51:42 2024 -0600     
+
+    Added in random generation of Roads, marts and centers   
+
+Author: Mgelineau <gelineau1234321@gmail.com>
+Date:   Mon Jan 29 16:23:51 2024 -0600
+
+    added generations for 2 tall grass regions and a water region
+
+Author: Mgelineau <gelineau1234321@gmail.com>
+Date:   Mon Jan 29 15:14:21 2024 -0600
+
+    added border with short grass on inside.  No entrances/exits made
