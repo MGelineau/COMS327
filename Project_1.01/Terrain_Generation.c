@@ -35,6 +35,8 @@ be interesting
 #define tallG ':'
 #define clearing '.'
 #define water '~'
+#define mart 'M'
+#define center 'C'
 
 /*
 *Print board
@@ -52,6 +54,118 @@ void print_board(char ter[hei][wid])
     }
 }
 
+/*
+* Generate paths
+*/
+void generate_Paths(char ter[hei][wid])
+{
+    int xTop = (rand() % wid);
+    int xBot = (rand() % wid);
+    int yLeft = (rand() % hei);
+    int yRight = (rand() % hei);
+    int i;
+
+
+    if (xTop > xBot)
+    {
+        int countM = 0;
+        int countC = 0;
+
+        //Link to the y value on left
+        for (i = 0; i <= yLeft; i++)
+        {
+            ter[i][xTop] = road;
+        }
+
+        i = 20;
+        while (i >= yLeft)
+        {
+            ter[i][xBot] = road;
+            i--;
+        }
+
+        //Connect yLeft to the x value farthest away
+        for (i = 0; i <= xTop; i++)
+        {
+            ter[yLeft][i] = road;
+        }
+
+
+        //Same with yRight
+        i = 79;
+        while (i >= xBot)
+        {
+            int randX = rand() % 2;
+            int randY = rand() % 2;
+            ter[yRight][i] = road;
+
+            if (randX == 0 && countM != 1)
+            {
+                ter[yRight - 1][i - 3] = mart;
+                countM++;
+            }
+
+            if (randY == 0 && countC != 1)
+            {
+                ter[yRight + 1][i - 3] = center;
+                countC++;
+            }
+
+
+            i--;
+        }
+
+
+        
+    }
+
+    else
+    {
+        int countM = 0;
+        int countC = 0;
+
+        //Link to the y value on left
+        for (i = 0; i <= yLeft; i++)
+        {
+            ter[i][xTop] = road;
+        }
+
+        i = 20;
+        while (i >= yLeft)
+        {
+            ter[i][xBot] = road;
+            i--;
+        }
+
+        //Connect yLeft to the x value farthest away
+        for (i = 0; i <= xBot; i++)
+        {
+            ter[yLeft][i] = road;
+        }
+
+        //Same with yRight
+        i = 79;
+        while (i >= xTop)
+        {
+            int randX = rand() % 2;
+            int randY = rand() % 2;
+            ter[yRight][i] = road;
+
+            if (randX == 0 && countM != 1)
+            {
+                ter[yRight - 1][i - 3] = mart;
+                countM++;
+            }
+
+            if (randY == 0 && countC != 1)
+            {
+                ter[yRight + 1][i - 3] = center;
+                countC++;
+            }
+            i--;
+        }
+    }
+}
 
 /*
 * Generate Tall Grass
@@ -123,18 +237,54 @@ void generate_border(char ter[hei][wid])
 
 }
 
+/*
+* Generate other elements
+*/
+void generate_Other(char ter[hei][wid])
+{
+    int i, j;
+    for (i = 0; i < hei; i++)
+    {
+        for (j = 0; j < wid; j++)
+        {
+            int randM = rand() % 18;
+            if (randM % 7 == 0 && ter[i][j] != boulder)
+            {
+                ter[i][j] = tree;
+                randM++;
+            }
+
+            if (randM % 9 == 0)
+            {
+                ter[i][j] = boulder;
+                randM++;
+            }
+            
+        }
+    }
+}
+
 int main (int argc, char *argv[])
 {
     srand(time(NULL));
 
     char ter[hei][wid];
+    
     //Self explanatory
     generate_border(ter);
 
     //generates 2 regions of grass and a region of water
     generate_TallG(ter);
-    generate_Water(ter);
     generate_TallG(ter);
+    generate_Water(ter);
+
+    generate_TallG(ter);
+    generate_Water(ter);
+
+    generate_Other(ter);
+
+    generate_Paths(ter);
+    
     
     print_board(ter);
 
