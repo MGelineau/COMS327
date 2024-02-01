@@ -1,0 +1,6 @@
+map_t *world[401][401] - [200][200] is center
+
+while ((c = getc()) !='q')
+    switch(c):
+    case 'n' : break
+    case'f' : scanf("_%d_%d, x, y)
