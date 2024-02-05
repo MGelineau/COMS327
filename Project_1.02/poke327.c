@@ -742,7 +742,7 @@ static void print_map(map_t *m)
     }
     putchar('\n');
   }
-  printf("Coordinates (%d, %d)\n", m->x, m->y);
+  printf("Coordinates (%d, %d)\n", m->x - 200, m->y - 200);
 
   if (default_reached) {
     fprintf(stderr, "Default reached in %s\n", __FUNCTION__);
