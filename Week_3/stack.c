@@ -10,9 +10,9 @@ int stack_init(struct stack *s)
     return 0;
 }
 
-int stack_destroy(struct stack *s)
+int stack_destroy(stack_t *s)
 {
-    struct stack_node *n;
+    stack_node_t *n;
     for (n = s->top; n; n = s->top)
     {
         s->top = s->top->next;
@@ -25,9 +25,9 @@ int stack_destroy(struct stack *s)
     return 0;
 }
 
-int stack_push(struct stack *s, int d)
+int stack_push(stack_t *s, int d)
 {
-    struct stack_node *n;
+    stack_node_t *n;
 
     // sizeof is a static (i.e., compile time) operator that returns the number
     // of bytes required the store the expression given as its paramater
@@ -44,9 +44,9 @@ int stack_push(struct stack *s, int d)
     return 0;
 }
 
-int stack_pop(struct stack *s, int *d)
+int stack_pop(stack_t *s, int *d)
 {
-    struct stack_node *n;
+    stack_node_t *n;
 
     if (!s->size)
     {
@@ -62,7 +62,7 @@ int stack_pop(struct stack *s, int *d)
     return 0;
 }
 
-int stack_top(struct stack *s, int *d)
+int stack_top(stack_t *s, int *d)
 {
     if (!s->size)
     {
@@ -74,12 +74,12 @@ int stack_top(struct stack *s, int *d)
     return 0;
 }
 
-int stack_size(struct stack *s)
+int stack_size(stack_t *s)
 {
     return s->size;
 }
 
-int stack_is_empty(struct stack *s)
+int stack_is_empty(stack_t *s)
 {
     return !s->size;
 }
