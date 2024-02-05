@@ -62,6 +62,8 @@ typedef struct map {
   terrain_type_t map[MAP_Y][MAP_X];
   uint8_t height[MAP_Y][MAP_X];
   uint8_t n, s, e, w;
+  int x;
+  int y;
 } map_t;
 
 typedef struct queue_node {
@@ -674,7 +676,15 @@ static int place_trees(map_t *m)
   return 0;
 }
 
-static int new_map(map_t *m)
+static int add_coords(map_t *m, int x, int y)
+{
+  m->x = x;
+  m->y = y;
+
+  return 0;
+}
+
+static int new_map(map_t *m, int x, int y)
 {
   smooth_height(m);
   map_terrain(m,
@@ -685,6 +695,8 @@ static int new_map(map_t *m)
   build_paths(m);
   place_pokemart(m);
   place_center(m);
+  add_coords(m, x, y);
+
 
   return 0;
 }
@@ -730,6 +742,7 @@ static void print_map(map_t *m)
     }
     putchar('\n');
   }
+  printf("Coordinates (%d, %d)\n", m->x, m->y);
 
   if (default_reached) {
     fprintf(stderr, "Default reached in %s\n", __FUNCTION__);
@@ -739,6 +752,21 @@ static void print_map(map_t *m)
 int main(int argc, char *argv[])
 {
   map_t d;
+
+  //Create a new world
+  map_t* world[401][401];
+  malloc(sizeof(world));
+
+  //initialize world to null
+  for (int i = 0; i < 401; i++)
+  {
+    for(int j = 0; j < 401; j++)
+    {
+      world[i][j] = NULL;
+    }
+  }
+
+
   struct timeval tv;
   uint32_t seed;
 
@@ -752,8 +780,35 @@ int main(int argc, char *argv[])
   printf("Using seed: %u\n", seed);
   srand(seed);
 
-  new_map(&d);
+  
+  new_map(&d, 200, 200);
   print_map(&d);
+
+  //get user input
+  char input;
+  int coordX;
+  int coordY;
+
+  printf("What would you like to do?");
+  scanf("%c", &input);
+  
+  while (input != 'q')
+  {
+    if (input == 'f')
+    {
+      printf("Where would you like to go?");
+      scanf("%d %d", &coordX, &coordY);
+    }
+    if(input == 'e')
+    {
+      new_map(&d, d.y, d.x + 1);
+      print_map(&d);
+    }
+
+      printf("What would you like to do?");
+      scanf("%c", &input);
+  }
+  
   
   return 0;
 }
