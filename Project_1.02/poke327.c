@@ -786,12 +786,12 @@ int main(int argc, char *argv[])
 
   //get user input
   char input;
-  int coordX;
-  int coordY;
+  int coordX = d.x;
+  int coordY= d.y;
 
   printf("What would you like to do?");
   scanf("%c", &input);
-  
+
   while (input != 'q')
   {
     if (input == 'f')
@@ -799,9 +799,31 @@ int main(int argc, char *argv[])
       printf("Where would you like to go?");
       scanf("%d %d", &coordX, &coordY);
     }
-    if(input == 'e')
+    else if(input == 'e')
     {
-      new_map(&d, d.y, d.x + 1);
+      coordX = coordX + 1;
+      new_map(&d, coordY, coordX);
+      print_map(&d);
+    }
+
+    else if(input == 'w')
+    {
+      coordX = coordX - 1;
+      new_map(&d, coordY, coordX);
+      print_map(&d);
+    }
+
+    else if(input == 'n')
+    {
+      coordY = coordY + 1;
+      new_map(&d, coordY, coordX);
+      print_map(&d);
+    }
+
+    else if(input == 's')
+    {
+      coordY = coordY - 1;
+      new_map(&d, coordY, coordX);
       print_map(&d);
     }
 
