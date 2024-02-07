@@ -701,7 +701,7 @@ static int new_map(map_t *m, int x, int y)
   return 0;
 }
 
-static void print_map(map_t *m)
+static void print_map(map_t *m, int true)
 {
   int x, y;
   int default_reached = 0;
@@ -742,7 +742,13 @@ static void print_map(map_t *m)
     }
     putchar('\n');
   }
-  printf("Coordinates (%d, %d)\n", m->x - 200, m->y - 200);
+  if(true == 0)
+  {
+      printf("Coordinates (%d, %d)\n", m->x, m->y);
+  }
+  else{
+      printf("Coordinates (%d, %d)\n", m->x - 200, m->y - 200);
+  }
 
   if (default_reached) {
     fprintf(stderr, "Default reached in %s\n", __FUNCTION__);
@@ -780,14 +786,16 @@ int main(int argc, char *argv[])
   printf("Using seed: %u\n", seed);
   srand(seed);
 
-  
+ int locate = 1; 
   new_map(&d, 200, 200);
-  print_map(&d);
+  world[200][200] = &d;
+  print_map(world[200][200],locate);
 
   //get user input
   char input;
   int coordX = d.x;
   int coordY= d.y;
+  
 
   printf("What would you like to do?");
   scanf("%c", &input);
@@ -796,35 +804,85 @@ int main(int argc, char *argv[])
   {
     if (input == 'f')
     {
+      locate = 0;
       printf("Where would you like to go?");
       scanf("%d %d", &coordX, &coordY);
+      if(world[coordX][coordY] == NULL)
+      {
+        map_t tmp;
+        new_map(&tmp, coordY, coordX);
+        world[coordX][coordY] = &tmp;
+        print_map(world[coordX][coordY], locate);
+      }
+      else
+      {
+        print_map(world[coordX][coordY],locate );
+      }
+
     }
     else if(input == 'e')
     {
       coordX = coordX + 1;
-      new_map(&d, coordY, coordX);
-      print_map(&d);
+      if(world[coordX][coordY] == NULL)
+      {
+        map_t tmp;
+       new_map(&tmp, coordY, coordX);
+        world[coordX][coordY] = &tmp;
+        print_map(world[coordX][coordY],locate);
+      }
+      else
+      {
+        print_map(world[coordX][coordY],locate);
+      }
     }
 
     else if(input == 'w')
     {
       coordX = coordX - 1;
-      new_map(&d, coordY, coordX);
-      print_map(&d);
+      if(world[coordX][coordY] == NULL)
+      {
+        map_t tmp;
+        new_map(&tmp, coordY, coordX);
+        world[coordX][coordY] = &tmp;
+        print_map(world[coordX][coordY],locate);
+      }
+      else
+      {
+        print_map(world[coordX][coordY],locate);
+      }
+      
     }
 
     else if(input == 'n')
     {
       coordY = coordY + 1;
-      new_map(&d, coordY, coordX);
-      print_map(&d);
+      if(world[coordX][coordY] == NULL)
+      {
+        map_t tmp;
+       new_map(&tmp, coordY, coordX);
+        world[coordX][coordY] = &tmp;
+        print_map(world[coordX][coordY],locate);
+      }
+      else
+      {
+        print_map(world[coordX][coordY],locate);
+      }
     }
 
     else if(input == 's')
     {
       coordY = coordY - 1;
-      new_map(&d, coordY, coordX);
-      print_map(&d);
+      if(world[coordX][coordY] == NULL)
+      {
+        map_t tmp;
+       new_map(&tmp, coordY, coordX);
+        world[coordX][coordY] = &tmp;
+        print_map(world[coordX][coordY],locate);
+      }
+      else
+      {
+        print_map(world[coordX][coordY],locate);
+      }
     }
 
       printf("What would you like to do?");
