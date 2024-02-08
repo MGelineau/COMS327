@@ -1,0 +1,3 @@
+For djikstra alg.
+
+We go through alg then go to node with smallest weight

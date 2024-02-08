@@ -4,3 +4,13 @@ while ((c = getc()) !='q')
     switch(c):
     case 'n' : break
     case'f' : scanf("_%d_%d, x, y)
+
+gdb debugging tutorials
+
+valgrind 
+    (not installed locally)
+"valgrind ./stack"
+--leak-check=full
+--show-leak-kinds=all
+--track-origins=yes
+--log-file=valgrind.log
