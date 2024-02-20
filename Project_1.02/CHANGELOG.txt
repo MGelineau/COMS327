@@ -1,0 +1,23 @@
+commit f8c91e18533de448e209ff6c1fef013694739b43 (HEAD -> main, origin/main, origin/HEAD)
+Author: Mgelineau <gelineau1234321@gmail.com>
+Date:   Wed Feb 7 13:50:40 2024 -0600
+
+    Added directions with pointers back to original map when navigating away
+
+commit bb19f05ff41ea00c4e49a4e85e70f43f23e7ae7b
+Author: Mgelineau <gelineau1234321@gmail.com>
+Date:   Mon Feb 5 13:23:01 2024 -0600
+
+    Now displays player is at (0, 0) rather than (200, 20)
+
+commit c77f97b420d8bf7d09ba9547766d3d2ce09216a4
+Author: Mgelineau <gelineau1234321@gmail.com>
+Date:   Mon Feb 5 13:15:17 2024 -0600
+
+    fixed coordinate bug (idk what was happening but it good now).  Added in inputs for the rest of the commands
+
+commit f234a9dbea00997cde6ad43ec06cdb769b877e4f
+Author: Mgelineau <gelineau1234321@gmail.com>
+Date:   Mon Feb 5 12:58:38 2024 -0600
+
+    added coordinates to any map, and E, F, Q input options.  No pointers or links between maps yet
