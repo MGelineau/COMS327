@@ -1,0 +1,28 @@
+Datastructures:
+Suggested approach:
+2 Distance maps belong in the world, not in the map.
+Hold character in the map not the world
+Have data structure that holds npcs (once you find one, print it.  Otherwise print terrain)
+Character_t *cmap[][] (Same size as actual map)
+    While drawing, if theres is a character there, print it
+
+    Struct character{ hold in map
+        char symb;
+        pair pos;
+        int next_turn;
+    }
+
+    priority queue is full of events
+        -event queue
+            -symbols
+            -next_turn (initially 0)
+            -seq number
+
+    //Worse approach
+    int gt
+    for (gt = 0; 1; gt++)
+    {
+        iterate through characters
+        if nt=gt
+        movecharacter
+    }
