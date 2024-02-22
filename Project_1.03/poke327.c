@@ -35,6 +35,22 @@ typedef struct character
   int y;
 } character_t;
 
+typedef struct hiker_p
+{
+  heap_node_t *hn;
+  uint8_t pos[2];
+  uint8_t from[2];
+  int32_t cost;
+} hiker_path_t;
+
+typedef struct rival_p
+{
+  heap_node_t *hn;
+  uint8_t pos[2];
+  uint8_t from[2];
+  int32_t cost;
+} rival_path_t;
+
 character_t PC;
 
 typedef int16_t pair_t[num_dims];
@@ -93,6 +109,16 @@ typedef struct world
  * large thing to put on the stack.  To avoid that, world is a global.     */
 world_t world;
 
+static int32_t hiker_cost_cmp(const void *key, const void *with)
+{
+  return ((hiker_path_t *)key)->cost - ((hiker_path_t *)with)->cost;
+}
+
+static int32_t rival_cost_cmp(const void *key, const void *with)
+{
+  return ((rival_path_t *)key)->cost - ((rival_path_t *)with)->cost;
+}
+
 static int32_t path_cmp(const void *key, const void *with)
 {
   return ((path_t *)key)->cost - ((path_t *)with)->cost;
@@ -142,6 +168,7 @@ static void dijkstra_path(map_t *m, pair_t from, pair_t to)
       path[y][x].hn = heap_insert(&h, &path[y][x]);
     }
   }
+
   while ((p = heap_remove_min(&h)))
   {
     p->hn = NULL;
@@ -219,6 +246,314 @@ static void dijkstra_path(map_t *m, pair_t from, pair_t to)
                                            [p->pos[dim_x]]
                                                .hn);
     }
+  }
+}
+
+static void hiker_path(map_t *m, int characterY, int characterX)
+{
+  static hiker_path_t hiker[MAP_Y][MAP_X], *p;
+  static uint32_t initialized = 0;
+  heap_t h;
+  uint32_t x, y;
+
+  if (!initialized)
+  {
+    for (y = 0; y < MAP_Y; y++)
+    {
+      for (x = 0; x < MAP_X; x++)
+      {
+        hiker[y][x].pos[dim_y] = y;
+        hiker[y][x].pos[dim_x] = x;
+      }
+    }
+    initialized = 1;
+  }
+
+  for (y = 0; y < MAP_Y; y++)
+  {
+    for (x = 0; x < MAP_X; x++)
+    {
+      hiker[y][x].cost = INT_MAX;
+    }
+  }
+
+  hiker[characterY][characterX].cost = 0;
+
+  heap_init(&h, hiker_cost_cmp, NULL);
+
+  for (y = 0; y < MAP_Y; y++)
+  {
+    for (x = 0; x < MAP_X; x++)
+    {
+      if (m->height[y][x] == 0)
+      {
+        hiker[y][x].hn = heap_insert(&h, &hiker[y][x]);
+      }
+      else
+      {
+        hiker[y][x].hn = NULL;
+      }
+    }
+  }
+
+  while ((p = heap_remove_min(&h)))
+  {
+    p->hn = NULL;
+
+    if ((hiker[p->pos[dim_y] - 1][p->pos[dim_x] - 1].hn) &&
+        (hiker[p->pos[dim_y] - 1][p->pos[dim_x] - 1].cost >
+         p->cost + 1))
+    {
+      hiker[p->pos[dim_y] - 1][p->pos[dim_x] - 1].cost = p->cost + 1;
+      hiker[p->pos[dim_y] - 1][p->pos[dim_x] - 1].from[dim_y] = p->pos[dim_y];
+      hiker[p->pos[dim_y] - 1][p->pos[dim_x] - 1].from[dim_x] = p->pos[dim_x];
+      heap_decrease_key_no_replace(&h, hiker[p->pos[dim_y] - 1][p->pos[dim_x] - 1].hn);
+    }
+    if ((hiker[p->pos[dim_y] - 1][p->pos[dim_x]].hn) &&
+        (hiker[p->pos[dim_y] - 1][p->pos[dim_x]].cost >
+         p->cost + 1))
+    {
+      hiker[p->pos[dim_y] - 1][p->pos[dim_x]].cost = p->cost + 1;
+      hiker[p->pos[dim_y] - 1][p->pos[dim_x]].from[dim_y] = p->pos[dim_y];
+      hiker[p->pos[dim_y] - 1][p->pos[dim_x]].from[dim_x] = p->pos[dim_x];
+      heap_decrease_key_no_replace(&h, hiker[p->pos[dim_y] - 1][p->pos[dim_x]].hn);
+    }
+
+    if ((hiker[p->pos[dim_y] - 1][p->pos[dim_x] + 1].hn) &&
+        (hiker[p->pos[dim_y] - 1][p->pos[dim_x] + 1].cost >
+         p->cost + 1))
+    {
+      hiker[p->pos[dim_y] - 1][p->pos[dim_x] + 1].cost = p->cost + 1;
+      hiker[p->pos[dim_y] - 1][p->pos[dim_x] + 1].from[dim_y] = p->pos[dim_y];
+      hiker[p->pos[dim_y] - 1][p->pos[dim_x] + 1].from[dim_x] = p->pos[dim_x];
+      heap_decrease_key_no_replace(&h, hiker[p->pos[dim_y] - 1][p->pos[dim_x] + 1].hn);
+    }
+
+    if ((hiker[p->pos[dim_y]][p->pos[dim_x] + 1].hn) &&
+        (hiker[p->pos[dim_y]][p->pos[dim_x] + 1].cost >
+         p->cost + 1))
+    {
+      hiker[p->pos[dim_y]][p->pos[dim_x] + 1].cost = p->cost + 1;
+      hiker[p->pos[dim_y]][p->pos[dim_x] + 1].from[dim_y] = p->pos[dim_y];
+      hiker[p->pos[dim_y]][p->pos[dim_x] + 1].from[dim_x] = p->pos[dim_x];
+      heap_decrease_key_no_replace(&h, hiker[p->pos[dim_y]]
+                                            [p->pos[dim_x] + 1]
+                                                .hn);
+    }
+    if ((hiker[p->pos[dim_y] + 1][p->pos[dim_x] + 1].hn) &&
+        (hiker[p->pos[dim_y] + 1][p->pos[dim_x] + 1].cost >
+         p->cost + 1))
+    {
+      hiker[p->pos[dim_y] + 1][p->pos[dim_x] + 1].cost = p->cost + 1;
+      hiker[p->pos[dim_y] + 1][p->pos[dim_x] + 1].from[dim_y] = p->pos[dim_y];
+      hiker[p->pos[dim_y] + 1][p->pos[dim_x] + 1].from[dim_x] = p->pos[dim_x];
+      heap_decrease_key_no_replace(&h, hiker[p->pos[dim_y] + 1]
+                                            [p->pos[dim_x] + 1]
+                                                .hn);
+    }
+
+    if ((hiker[p->pos[dim_y] + 1][p->pos[dim_x]].hn) &&
+        (hiker[p->pos[dim_y] + 1][p->pos[dim_x]].cost >
+         p->cost + 1))
+    {
+      hiker[p->pos[dim_y] + 1][p->pos[dim_x]].cost = p->cost + 1;
+      hiker[p->pos[dim_y] + 1][p->pos[dim_x]].from[dim_y] = p->pos[dim_y];
+      hiker[p->pos[dim_y] + 1][p->pos[dim_x]].from[dim_x] = p->pos[dim_x];
+      heap_decrease_key_no_replace(&h, hiker[p->pos[dim_y] + 1]
+                                            [p->pos[dim_x]]
+                                                .hn);
+    }
+    if ((hiker[p->pos[dim_y] + 1][p->pos[dim_x] - 1].hn) &&
+        (hiker[p->pos[dim_y] + 1][p->pos[dim_x] - 1].cost >
+         p->cost + 1))
+    {
+      hiker[p->pos[dim_y] + 1][p->pos[dim_x] - 1].cost = p->cost + 1;
+      hiker[p->pos[dim_y] + 1][p->pos[dim_x] - 1].from[dim_y] = p->pos[dim_y];
+      hiker[p->pos[dim_y] + 1][p->pos[dim_x] - 1].from[dim_x] = p->pos[dim_x];
+      heap_decrease_key_no_replace(&h, hiker[p->pos[dim_y] + 1]
+                                            [p->pos[dim_x] - 1]
+                                                .hn);
+    }
+
+    if ((hiker[p->pos[dim_y]][p->pos[dim_x] - 1].hn) &&
+        (hiker[p->pos[dim_y]][p->pos[dim_x] - 1].cost >
+         p->cost + 1))
+    {
+      hiker[p->pos[dim_y]][p->pos[dim_x] - 1].cost = p->cost + 1;
+      hiker[p->pos[dim_y]][p->pos[dim_x] - 1].from[dim_y] = p->pos[dim_y];
+      hiker[p->pos[dim_y]][p->pos[dim_x] - 1].from[dim_x] = p->pos[dim_x];
+      heap_decrease_key_no_replace(&h, hiker[p->pos[dim_y]]
+                                            [p->pos[dim_x] - 1]
+                                                .hn);
+    }
+  }
+
+  for (y = 0; y < MAP_Y; y++)
+  {
+    for (x = 0; x < MAP_X; x++)
+    {
+      if (y == characterY && x == characterX)
+        printf("%c", '@');
+      else if (hiker[y][x].cost != INT_MAX)
+        printf("%d ", hiker[y][x].cost % 100);
+      else
+        printf("%c", ' ');
+    }
+    printf("\n");
+  }
+}
+
+static void rival_path(map_t *m, int characterY, int characterX)
+{
+  static rival_path_t rival[MAP_Y][MAP_X], *p;
+  static uint32_t initialized = 0;
+  heap_t h;
+  uint32_t x, y;
+
+  if (!initialized)
+  {
+    for (y = 0; y < MAP_Y; y++)
+    {
+      for (x = 0; x < MAP_X; x++)
+      {
+        rival[y][x].pos[dim_y] = y;
+        rival[y][x].pos[dim_x] = x;
+      }
+    }
+    initialized = 1;
+  }
+
+  for (y = 0; y < MAP_Y; y++)
+  {
+    for (x = 0; x < MAP_X; x++)
+    {
+      rival[y][x].cost = INT_MAX;
+    }
+  }
+
+  rival[characterY][characterX].cost = 0;
+
+  heap_init(&h, rival_cost_cmp, NULL);
+
+  for (y = 0; y < MAP_Y; y++)
+  {
+    for (x = 0; x < MAP_X; x++)
+    {
+      if (m->height[y][x] == 0)
+      {
+        rival[y][x].hn = heap_insert(&h, &rival[y][x]);
+      }
+      else
+      {
+        rival[y][x].hn = NULL;
+      }
+    }
+  }
+
+  while ((p = heap_remove_min(&h)))
+  {
+    p->hn = NULL;
+
+    if ((rival[p->pos[dim_y] - 1][p->pos[dim_x] - 1].hn) &&
+        (rival[p->pos[dim_y] - 1][p->pos[dim_x] - 1].cost >
+         p->cost + 1))
+    {
+      rival[p->pos[dim_y] - 1][p->pos[dim_x] - 1].cost = p->cost + 1;
+      rival[p->pos[dim_y] - 1][p->pos[dim_x] - 1].from[dim_y] = p->pos[dim_y];
+      rival[p->pos[dim_y] - 1][p->pos[dim_x] - 1].from[dim_x] = p->pos[dim_x];
+      heap_decrease_key_no_replace(&h, rival[p->pos[dim_y] - 1][p->pos[dim_x] - 1].hn);
+    }
+    if ((rival[p->pos[dim_y] - 1][p->pos[dim_x]].hn) &&
+        (rival[p->pos[dim_y] - 1][p->pos[dim_x]].cost >
+         p->cost + 1))
+    {
+      rival[p->pos[dim_y] - 1][p->pos[dim_x]].cost = p->cost + 1;
+      rival[p->pos[dim_y] - 1][p->pos[dim_x]].from[dim_y] = p->pos[dim_y];
+      rival[p->pos[dim_y] - 1][p->pos[dim_x]].from[dim_x] = p->pos[dim_x];
+      heap_decrease_key_no_replace(&h, rival[p->pos[dim_y] - 1][p->pos[dim_x]].hn);
+    }
+
+    if ((rival[p->pos[dim_y] - 1][p->pos[dim_x] + 1].hn) &&
+        (rival[p->pos[dim_y] - 1][p->pos[dim_x] + 1].cost >
+         p->cost + 1))
+    {
+      rival[p->pos[dim_y] - 1][p->pos[dim_x] + 1].cost = p->cost + 1;
+      rival[p->pos[dim_y] - 1][p->pos[dim_x] + 1].from[dim_y] = p->pos[dim_y];
+      rival[p->pos[dim_y] - 1][p->pos[dim_x] + 1].from[dim_x] = p->pos[dim_x];
+      heap_decrease_key_no_replace(&h, rival[p->pos[dim_y] - 1][p->pos[dim_x] + 1].hn);
+    }
+
+    if ((rival[p->pos[dim_y]][p->pos[dim_x] + 1].hn) &&
+        (rival[p->pos[dim_y]][p->pos[dim_x] + 1].cost >
+         p->cost + 1))
+    {
+      rival[p->pos[dim_y]][p->pos[dim_x] + 1].cost = p->cost + 1;
+      rival[p->pos[dim_y]][p->pos[dim_x] + 1].from[dim_y] = p->pos[dim_y];
+      rival[p->pos[dim_y]][p->pos[dim_x] + 1].from[dim_x] = p->pos[dim_x];
+      heap_decrease_key_no_replace(&h, rival[p->pos[dim_y]]
+                                            [p->pos[dim_x] + 1]
+                                                .hn);
+    }
+    if ((rival[p->pos[dim_y] + 1][p->pos[dim_x] + 1].hn) &&
+        (rival[p->pos[dim_y] + 1][p->pos[dim_x] + 1].cost >
+         p->cost + 1))
+    {
+      rival[p->pos[dim_y] + 1][p->pos[dim_x] + 1].cost = p->cost + 1;
+      rival[p->pos[dim_y] + 1][p->pos[dim_x] + 1].from[dim_y] = p->pos[dim_y];
+      rival[p->pos[dim_y] + 1][p->pos[dim_x] + 1].from[dim_x] = p->pos[dim_x];
+      heap_decrease_key_no_replace(&h, rival[p->pos[dim_y] + 1]
+                                            [p->pos[dim_x] + 1]
+                                                .hn);
+    }
+
+    if ((rival[p->pos[dim_y] + 1][p->pos[dim_x]].hn) &&
+        (rival[p->pos[dim_y] + 1][p->pos[dim_x]].cost >
+         p->cost + 1))
+    {
+      rival[p->pos[dim_y] + 1][p->pos[dim_x]].cost = p->cost + 1;
+      rival[p->pos[dim_y] + 1][p->pos[dim_x]].from[dim_y] = p->pos[dim_y];
+      rival[p->pos[dim_y] + 1][p->pos[dim_x]].from[dim_x] = p->pos[dim_x];
+      heap_decrease_key_no_replace(&h, rival[p->pos[dim_y] + 1]
+                                            [p->pos[dim_x]]
+                                                .hn);
+    }
+    if ((rival[p->pos[dim_y] + 1][p->pos[dim_x] - 1].hn) &&
+        (rival[p->pos[dim_y] + 1][p->pos[dim_x] - 1].cost >
+         p->cost + 1))
+    {
+      rival[p->pos[dim_y] + 1][p->pos[dim_x] - 1].cost = p->cost + 1;
+      rival[p->pos[dim_y] + 1][p->pos[dim_x] - 1].from[dim_y] = p->pos[dim_y];
+      rival[p->pos[dim_y] + 1][p->pos[dim_x] - 1].from[dim_x] = p->pos[dim_x];
+      heap_decrease_key_no_replace(&h, rival[p->pos[dim_y] + 1]
+                                            [p->pos[dim_x] - 1]
+                                                .hn);
+    }
+
+    if ((rival[p->pos[dim_y]][p->pos[dim_x] - 1].hn) &&
+        (rival[p->pos[dim_y]][p->pos[dim_x] - 1].cost >
+         p->cost + 1))
+    {
+      rival[p->pos[dim_y]][p->pos[dim_x] - 1].cost = p->cost + 1;
+      rival[p->pos[dim_y]][p->pos[dim_x] - 1].from[dim_y] = p->pos[dim_y];
+      rival[p->pos[dim_y]][p->pos[dim_x] - 1].from[dim_x] = p->pos[dim_x];
+      heap_decrease_key_no_replace(&h, rival[p->pos[dim_y]]
+                                            [p->pos[dim_x] - 1]
+                                                .hn);
+    }
+  }
+
+  for (y = 0; y < MAP_Y; y++)
+  {
+    for (x = 0; x < MAP_X; x++)
+    {
+      if (y == characterY && x == characterX)
+        printf("%c", '@');
+      else if (rival[y][x].cost != INT_MAX)
+        printf("%d ", rival[y][x].cost % 100);
+      else
+        printf("%c", ' ');
+    }
+    printf("\n");
   }
 }
 
@@ -913,7 +1248,7 @@ static void addChar(map_t *m)
   {
     for (x = 0; x < MAP_X; x++)
     {
-        int player = rand() % 2;
+      int player = rand() % 2;
       if (m->map[y][x] != ter_mountain &&
           m->map[y][x] != ter_tree &&
           m->map[y][x] != ter_water &&
@@ -1083,7 +1418,6 @@ static void print_map()
   }
 }
 
-
 // The world is global because of its size, so init_world is parameterless
 void init_world()
 {
@@ -1199,6 +1533,9 @@ int main(int argc, char *argv[])
       break;
     }
   } while (c != 'q');
+
+  hiker_path(world.cur_map, PC.y, PC.x);
+  rival_path(world.cur_map,PC.y, PC.x);
 
   delete_world();
 
