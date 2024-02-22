@@ -1,0 +1,9 @@
+Author: Mgelineau <gelineau1234321@gmail.com>
+Date:   Wed Feb 21 18:41:19 2024 -0600
+
+    dijkstra path based on profs path generation
+
+Author: Mgelineau <gelineau1234321@gmail.com>
+Date:   Tue Feb 20 10:15:44 2024 -0600
+
+    Added player into path
