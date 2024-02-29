@@ -7,7 +7,7 @@
 
 #define min3 (x, y, z)(min(x, min(y, z)))
 #define min4(x, y, z, w) (min(x, min(y, min(z, w))))
-#define min8 (a, b, c, d, e, f, g, h)(min(min4(a, b, c, d), min(e, f, g, h)))
+#define min8 (a, b, c, d, e, f, g, h) (min(min4(a, b, c, d), min4(e, f, g, h)))
 
 // typeof only works in c99 or later
 // Basic blocks have a value, equal to value of last line of block.
@@ -59,6 +59,7 @@ int main(int argc, char *argv[])
     min(function_with_side_effect(), really_expensive_function());
 
     min3(a, b, c);
+    min4(1, 2, 3, 4);
     min8(1, 2, 3, 4, 5, 6, 7, 8);
 
     stringify(foo);
