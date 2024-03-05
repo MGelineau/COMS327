@@ -20,6 +20,9 @@ int main(int argc, char *argv[])
     } s = {42, 1.616};
 
     FILE *f;
+    char str[13];
+    str [12] = '\0';
+
 
     if (argc == 2 && argv[1][0] == '-' && argv[1][3] == '\0' && argv[1][1] != '\0' && argv[1][2] != '\0')
     {
@@ -57,8 +60,10 @@ int main(int argc, char *argv[])
 
             return -1;
         }
-        fscanf(f, "%d %f", &s.i, &s.f);
-        printf("%d %f\n", s.i, s.f);
+        // fscanf(f, "%d %f", &s.i, &s.f);
+        fread(str, 1, 12, f);
+        printf("%s", str);
+        // printf("%d %f\n", s.i, s.f);
         break;
     case write_text:
         if (!(f = fopen("textfile", "wb")))

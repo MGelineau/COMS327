@@ -2,6 +2,8 @@
 #include <stdarg.h>
 #include <math.h> //To use functions, link in libm
 
+#define M_PI 3.14159265358979323846
+
 // A simplified printf that prints only char, int, float, and string
 void printf327(const char *format, ...)
 {
@@ -41,9 +43,17 @@ void printf327(const char *format, ...)
     printf("\n");
 }
 
+//#define PRINTF(...) printf(__VA_ARGS__);
+
+#define log(...) fprintf(logfile, __VA_ARGS__);
+
 int main(int argc, char *argv[])
 {
-    printf327("csddsdf", 'F', "Hello", 0, 7, "Ni!", 23, M_PI);
+    printf327("csddsdf", 'F', "Hello", 0, 7, "Ni!", M_PI, 23);
+
+    getenv("HOME");
+
+    PRINTF("%s\n", "Hello World");
 
     return 0;
 }
