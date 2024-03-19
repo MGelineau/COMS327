@@ -3,6 +3,14 @@
   "C_Cpp.errorSquiggles": "enabled",
   "files.associations": {
     "stack.h": "c",
-    "math.h": "c"
+    "math.h": "c",
+    "time.h": "c",
+    "windows.h": "c",
+    "unistd.h": "c",
+    "array": "c",
+    "initializer_list": "c",
+    "utility": "c",
+    "assert.h": "c",
+    "limits.h": "c"
   }
 }
