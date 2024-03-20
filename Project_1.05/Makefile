@@ -1,3 +1,4 @@
+PKGS = ncursesw
 CC = gcc
 CXX = g++
 ECHO = echo
@@ -5,10 +6,10 @@ RM = rm -f
 
 TERM = "S2019"
 
-CFLAGS = -Wall -Werror -ggdb -funroll-loops -DTERM=$(TERM)
-CXXFLAGS = -Wall -Werror -ggdb -funroll-loops -DTERM=$(TERM)
+CFLAGS = -Wall -Werror -ggdb -funroll-loops -DTERM=$(TERM) $(shell pkg-config --cflags $(PKGS))
+CXXFLAGS =  -Wall -Werror -ggdb -funroll-loops -DTERM=$(TERM)
 
-LDFLAGS = 
+LDFLAGS = -lncurses
 
 BIN = poke327
 OBJS = poke327.o heap.o
@@ -23,11 +24,11 @@ $(BIN): $(OBJS)
 
 %.o: %.c
 	@$(ECHO) Compiling $<
-	@$(CC) $(CFLAGS) -MMD -MF $*.d -c $<
+	@$(CC) $(CFLAGS)  -MMD -MF $*.d -c $<
 
 %.o: %.cpp
 	@$(ECHO) Compiling $<
-	@$(CXX) $(CXXFLAGS) -MMD -MF $*.d -c $<
+	@$(CXX) $(CXXFLAGS)  -MMD -MF $*.d -c $<
 
 .PHONY: all clean clobber etags
 

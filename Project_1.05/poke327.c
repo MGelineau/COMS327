@@ -6,8 +6,7 @@
 #include <sys/time.h>
 #include <assert.h>
 #include <unistd.h>
-#include <windows.h>
-#include <ncurses_mingw.h>
+#include <ncurses.h>
 
 #include "heap.h"
 
@@ -1474,62 +1473,57 @@ static int new_map()
 static void print_map()
 {
   int x, y;
-  int default_reached = 0;
-
-  printf("\n\n\n");
+  clear();
 
   for (y = 0; y < MAP_Y; y++) {
     for (x = 0; x < MAP_X; x++) {
       if (world.cur_map->cmap[y][x]) {
-        putchar(world.cur_map->cmap[y][x]->symbol);
+        mvaddch(y + 1, x, world.cur_map->cmap[y][x]->symbol);
       } else {
         switch (world.cur_map->map[y][x]) {
         case ter_boulder:
-          putchar(BOULDER_SYMBOL);
+          mvaddch(y + 1, x, BOULDER_SYMBOL);
           break;
         case ter_mountain:
-          putchar(MOUNTAIN_SYMBOL);
+          mvaddch(y + 1, x, MOUNTAIN_SYMBOL);
           break;
         case ter_tree:
-          putchar(TREE_SYMBOL);
+          mvaddch(y + 1, x, TREE_SYMBOL);
           break;
         case ter_forest:
-          putchar(FOREST_SYMBOL);
+          mvaddch(y + 1, x, FOREST_SYMBOL);
           break;
         case ter_path:
-          putchar(PATH_SYMBOL);
+          mvaddch(y + 1, x, PATH_SYMBOL);
           break;
         case ter_gate:
-          putchar(GATE_SYMBOL);
+          mvaddch(y + 1, x, GATE_SYMBOL);
           break;
         case ter_mart:
-          putchar(POKEMART_SYMBOL);
+          mvaddch(y + 1, x, POKEMART_SYMBOL);
           break;
         case ter_center:
-          putchar(POKEMON_CENTER_SYMBOL);
+          mvaddch(y + 1, x, POKEMON_CENTER_SYMBOL);
           break;
         case ter_grass:
-          putchar(TALL_GRASS_SYMBOL);
+          mvaddch(y + 1, x, TALL_GRASS_SYMBOL);
           break;
         case ter_clearing:
-          putchar(SHORT_GRASS_SYMBOL);
+          mvaddch(y + 1, x, SHORT_GRASS_SYMBOL);
           break;
         case ter_water:
-          putchar(WATER_SYMBOL);
+          mvaddch(y + 1, x, WATER_SYMBOL);
           break;
         default:
-          putchar(ERROR_SYMBOL);
-          default_reached = 1;
           break;
         }
       }
     }
-    putchar('\n');
   }
 
-  if (default_reached) {
-    fprintf(stderr, "Default reached in %s\n", __FUNCTION__);
-  }
+  printw("\n");
+  refresh();
+
 }
 
 // The world is global because of its size, so init_world is parameterless
@@ -1840,7 +1834,7 @@ void game_loop()
     if (c == &world.pc) {
       
       print_map();
-      sleep(5);
+      usleep(250000);
       c->next_turn += move_cost[char_pc][world.cur_map->map[c->pos[dim_y]]
                                                            [c->pos[dim_x]]];
     } else {
@@ -1853,13 +1847,27 @@ void game_loop()
       c->pos[dim_x] = d[dim_x];
     }
     heap_insert(&world.cur_map->turn, c);
+    break;
   }
+}
+
+void init_terminal(){
+  initscr();
+  cbreak();
+  raw();
+  noecho();
+  keypad(stdscr, TRUE);
+  printw("Key Command: \n");
+  refresh();
+  endwin();
 }
 
 int main(int argc, char *argv[])
 {
   struct timeval tv;
   uint32_t seed;
+
+  WINDOW *initscr(void);
 
   if (argc == 2) {
     seed = atoi(argv[1]);
@@ -1872,6 +1880,8 @@ int main(int argc, char *argv[])
   srand(seed);
 
   init_world();
+
+  init_terminal();
 
   game_loop();
 
