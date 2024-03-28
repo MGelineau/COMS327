@@ -11,6 +11,7 @@
     "initializer_list": "c",
     "utility": "c",
     "assert.h": "c",
-    "limits.h": "c"
+    "limits.h": "c",
+    "iostream": "cpp"
   }
 }

@@ -1,4 +1,4 @@
-#ifdef STRING327_H
+#ifndef STRING327_H
 #define STRING327_H
 #include <iostream>
 
@@ -50,11 +50,10 @@ public:
    string327 &operator+=(const string327 &);
    string327 &operator+=(const char *);
    char &operator[](int);
-   const char *c_str();
+   const char *c_str() const;
 
-   //Friends have access to our privates
+   // Friends have access to our privates
    friend std::istream &operator>>(std::istream &, const string327 &);
-
 };
 
 std::ostream &operator<<(ostream &, const string327 &);
