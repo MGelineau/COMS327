@@ -1,4 +1,8 @@
 #include <iostream>
+#include <cmath>
+#include <vector>
+#include <cstdlib>
+#include <ctime>
 
 using namespace std;
 
@@ -18,7 +22,7 @@ ostream &operator<<(ostream &o, shape &s)
 
 class rectangle : public shape
 { // inheritance
-private:
+protected:
     double w, h;
 
 public:
@@ -44,10 +48,62 @@ public:
     }
 };
 
+class square : public rectangle
+{
+public:
+    // Initialization lists allow you to call non-default constructors.  All
+    // members of a class must be instantiated before the constructor may run,
+    // so this is the only way to get the behavior you may want from a non-default constructor.
+    square(double side) : rectangle(side, side)
+    {
+    }
+
+    ostream &print(ostream &o) const
+    {
+        return o << "square[" << h << "]";
+    }
+};
+
+class circle : public shape
+{
+protected:
+    double r;
+
+public:
+    circle(double radius) : r(radius) {}
+
+    double circumference() const
+    {
+        return 2 * M_PI * r;
+    }
+
+    double perimeter() const
+    {
+        return circumference();
+    }
+
+    double area() const
+    {
+        return M_PI * r * r;
+    }
+
+    ostream &print(ostream &o) const
+    {
+        return o << "circle[" << r << "]";
+    }
+};
+
+#define rand_float(i) (i * (rand() / (RAND_MAX + 1.0)))
+
 int main()
 {
     shape *s;
     rectangle r(7, 4);
+    vector<shape *> v;
+    int i;
+    vector<shape *>::iterator vi;
+
+    srand(time(NULL));
 
     cout << r << endl;
 
@@ -55,6 +111,48 @@ int main()
 
     cout << *s << endl;
 
+    circle *c = new circle(7);
+
+    cout << *c << endl;
+    cout << c->area() << " " << c->circumference() << endl;
+
+    s = c;
+
+    s = new square(9);
+
+    cout << *s << endl;
+    cout << s->area() << " " << s->perimeter() << endl;
+
+    for (i = 0; i < 100; i++)
+    {
+        switch (rand() % 3)
+        {
+        case 0:
+            v.push_back(new rectangle(rand_float(10), rand_float(10)));
+            break;
+        case 1:
+            v.push_back(new square(rand_float(10)));
+            break;
+        case 2:
+            v.push_back(new circle(rand_float(10)));
+            break;
+        }
+    }
+
+    for (vi = v.begin(); vi != v.end(); vi++)
+    {
+        // Use the dereference operator to "look inside" an iterator.
+        // In this case, since our container is filled with pointers, we need
+        // a second * to dereference the object.
+        cout << **vi << endl;
+
+        if (dynamic_cast<circle *>(*vi))
+        {
+            cout << ((circle *)*vi)->circumference() << endl;
+        }
+    }
+
+    delete *vi;
+    
     return 0;
 }
-
