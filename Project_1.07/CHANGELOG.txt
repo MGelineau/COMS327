@@ -1,0 +1,11 @@
+commit 2f5b009621f22e339316a6cabb94c920a4883951
+Author: Mgelineau <gelineau1234321@gmail.com>
+Date:   Tue Apr 3 0:45:36 2024 -0500
+
+    finished with parsing of files, added $HOME environment check if not in share location
+
+    commit 2f5b009621f22e339316a6cabb94c920a4883951
+Author: Mgelineau <gelineau1234321@gmail.com>
+Date:   Tue Apr 2 20:45:36 2024 -0500
+
+    added in file parsing for pokemon, moves, pokemon_moves, pokemon_species

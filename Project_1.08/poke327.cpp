@@ -13,7 +13,7 @@
 #include "poke327.h"
 #include "character.h"
 #include "io.h"
-#include "pokedex.h"
+#include "db_parse.h"
 
 typedef struct queue_node {
   int x, y;
@@ -1153,6 +1153,10 @@ int main(int argc, char *argv[])
   //  int x, y;
   int i;
 
+  //REMOVE CSV
+  db_parse(false);
+  //return 0;
+  
   do_seed = 1;
   
   if (argc > 1) {
@@ -1195,19 +1199,11 @@ int main(int argc, char *argv[])
   
   init_world();
 
-  world.quit = 1;
-
   game_loop();
   
   delete_world();
 
   io_reset_terminal();
-
-  std::string fileName;
-  std::cout << "Enter filename: ";
-  std::cin >> fileName;
-
-  readFile(fileName);
   
   return 0;
 }
