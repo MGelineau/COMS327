@@ -1129,6 +1129,11 @@ void game_loop()
     c->next_turn += move_cost[n ? n->ctype : char_pc]
                              [world.cur_map->map[d[dim_y]][d[dim_x]]];
 
+    int pokemonAttack = rand() % 100;
+    if((world.cur_map->map[d[dim_y]][d[dim_x]] == ter_grass) && pokemonAttack < 10 && p){
+      io_find_pokemon();
+    }
+
     c->pos[dim_y] = d[dim_y];
     c->pos[dim_x] = d[dim_x];
 

@@ -3,6 +3,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <math.h>
 
 #include "io.h"
 #include "character.h"
@@ -416,10 +417,7 @@ void io_battle(character *aggressor, character *defender)
 {
   npc *n = (npc *)((aggressor == &world.pc) ? defender : aggressor);
 
-  io_display();
-  mvprintw(0, 0, "Aww, how'd you get so strong?  You and your pokemon must share a special bond!");
-  refresh();
-  getch();
+  io_poke_npc(n);
 
   n->defeated = 1;
   if (n->ctype == char_hiker || n->ctype == char_rival)
@@ -682,26 +680,136 @@ void io_choose_pokemon()
   refresh();
 
   char input = getch();
-  // Error catching
+
   while (input != '1' && input != '2' && input != '3')
   {
-    mvprintw(0, 20, "(click 1, 2, or 3)");
+    mvprintw(0, 20, "U gotta pick a pokemon");
     input = getch();
   }
 
   world.pc.group_size = 1;
 
-  switch(input){
-    case '1':
+  switch (input)
+  {
+  case '1':
     world.pc.char_pokemon[0] = poke1;
     break;
-    case '2':
+  case '2':
     world.pc.char_pokemon[0] = poke2;
     break;
-    case '3':
+  case '3':
     world.pc.char_pokemon[0] = poke3;
     break;
   }
+  clear();
+}
 
+void io_find_pokemon()
+{
+  int manhatten = (abs(world.cur_idx[dim_x]) - 200) + (abs(world.cur_idx[dim_y] - 200));
 
+  int min_level;
+  int max_level;
+
+  if (manhatten <= 200)
+  {
+    min_level = 1;
+    if (manhatten == 1 || manhatten == 2)
+    {
+      max_level = 1;
+    }
+    else
+    {
+      max_level = manhatten / 2;
+    }
+  }
+  else
+  {
+    if (manhatten == 201)
+    {
+      min_level = 1;
+    }
+    else
+    {
+      min_level = (manhatten - 200) / 2;
+    }
+    max_level = 100;
+  }
+
+  Pokemon *poke = new Pokemon(rand() % (max_level - min_level) + 1);
+
+  clear();
+
+  // print pokemon
+  mvprintw(0, 0, "You encountered a wild %s", poke->getPokemon());
+  mvprintw(1, 0, "Level: %d", poke->getLevel());
+  mvprintw(2, 0, "Moves:");
+  mvprintw(3, 2, "1: %s", poke->getMove(0));
+  mvprintw(4, 2, "2: %s", poke->getMove(1));
+  mvprintw(5, 0, "Stats:");
+  mvprintw(6, 2, "HP: %d", poke->getHp());
+  mvprintw(7, 2, "Attack: %d", poke->getAttack());
+  mvprintw(8, 2, "Defense: %d", poke->getDefense());
+  mvprintw(9, 2, "Special Attack: %d", poke->getSpecialAttack());
+  mvprintw(10, 2, "Special Defense: %d", poke->getSpecialDefense());
+  mvprintw(11, 2, "Speed: %d", poke->getSpeed());
+
+  // print pc pokemon
+  Pokemon *pcPoke = world.pc.char_pokemon[0];
+  mvprintw(13, 0, "Your pokemon: %s", pcPoke->getPokemon());
+  mvprintw(14, 0, "Level: %d", pcPoke->getLevel());
+  mvprintw(15, 0, "Moves:");
+  mvprintw(16, 2, "1: %s", pcPoke->getMove(0));
+  mvprintw(17, 2, "2: %s", pcPoke->getMove(1));
+  mvprintw(18, 0, "Stats: ");
+  mvprintw(19, 2, "HP: %d", pcPoke->getHp());
+  mvprintw(20, 2, "Attack: %d", pcPoke->getAttack());
+  mvprintw(21, 2, "Defense: %d", pcPoke->getDefense());
+  mvprintw(22, 2, "Special Attack: %d", pcPoke->getSpecialAttack());
+  mvprintw(23, 2, "Special Defense: %d", pcPoke->getSpecialDefense());
+  mvprintw(24, 2, "Speed: %d", pcPoke->getSpeed());
+
+  mvprintw(25, 28, "Press any key to run because you're a coward (Theres no implementation to fight)");
+
+  refresh();
+  getch();
+}
+
+void io_poke_npc(npc *n)
+{
+  Pokemon *poke = new Pokemon(rand() % 100);
+  n->char_pokemon[0] = poke;
+
+  clear();
+  mvprintw(0, 0, "This person has a %s:", poke->getPokemon());
+  mvprintw(1, 0, "Level: %d", poke->getLevel());
+  mvprintw(2, 0, "Moves:");
+  mvprintw(3, 3, "Move 1: %s", poke->getMove(0));
+  mvprintw(4, 3, "Move 2: %s", poke->getMove(1));
+  mvprintw(5, 0, "Stats:");
+  mvprintw(6, 3, "HP: %d", poke->getHp());
+  mvprintw(7, 3, "Attack: %d", poke->getAttack());
+  mvprintw(8, 3, "Defense: %d", poke->getDefense());
+  mvprintw(9, 3, "Special Attack: %d", poke->getSpecialAttack());
+  mvprintw(10, 3, "Special Defense: %d", poke->getSpecialDefense());
+  mvprintw(11, 3, "Speed: %d", poke->getSpeed());
+
+  Pokemon *pcPoke = world.pc.char_pokemon[0];
+  mvprintw(13, 0, "Your pokemon: %s", pcPoke->getPokemon());
+  mvprintw(14, 0, "Level: %d", pcPoke->getLevel());
+  mvprintw(15, 0, "Moves:");
+  mvprintw(16, 3, "Move 1: %s", pcPoke->getMove(0));
+  mvprintw(17, 3, "Move 2: %s", pcPoke->getMove(1));
+  mvprintw(18, 0, "Stats: ");
+  mvprintw(19, 3, "HP: %d", pcPoke->getHp());
+  mvprintw(20, 3, "Attack: %d", pcPoke->getAttack());
+  mvprintw(21, 3, "Defense: %d", pcPoke->getDefense());
+  mvprintw(22, 3, "Special Attack: %d", pcPoke->getSpecialAttack());
+  mvprintw(23, 3, "Special Defense: %d", pcPoke->getSpecialDefense());
+  mvprintw(24, 3, "Speed: %d", pcPoke->getSpeed());
+
+  mvprintw(25, 28, "Press any key to run because you're a coward (Theres no implementation to fight)");
+
+  refresh();
+  getch();
 }
