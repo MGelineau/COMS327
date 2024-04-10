@@ -1196,6 +1196,8 @@ int main(int argc, char *argv[])
   srand(seed);
 
   io_init_terminal();
+
+  io_choose_pokemon();
   
   init_world();
 
