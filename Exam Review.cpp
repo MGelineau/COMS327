@@ -7,21 +7,21 @@
 //(a)
 cout << "It’s LeviOsa, not LeviosAR!" << endl;
 
-//It's LeviOsa, not LeviosAR!
+// It's LeviOsa, not LeviosAR!
 
 //(b)
 string name = "Fluffy";
 cout << "Who told you about " << name.c_str() << "?" << endl;
 
-//Who told you about Fluffy?
+// Who told you about Fluffy?
 
 //(c)
 const char *s = "Yes, Hermione, I think this is gonna be "
                 "exactly like wizard’s chess.";
 cout << string(s) << endl;
 
-//Yes, Hermione, I think this is gonna be exactly like wizard's chess.
-//Calls string constructor
+// Yes, Hermione, I think this is gonna be exactly like wizard's chess.
+// Calls string constructor
 
 //(d)
 vector<string> v;
@@ -34,8 +34,8 @@ for (vector<string>::iterator i = v.begin(); i != v.end(); i++)
     cout << *i << endl;
 }
 
-//As written, v[0] does not exist.
-//Error.  Index out of bounds
+// As written, v[0] does not exist.
+// Error.  Index out of bounds
 
 //(e)
 vector<string> v;
@@ -45,6 +45,9 @@ for (vector<string>::iterator i = v.begin(); i != v.end(); i++)
 {
     cout << *i << endl;
 }
+
+// I do, but your
+// cousin don't do he?
 
 //(f)
 try
@@ -56,6 +59,10 @@ catch (string s)
 {
     cout << s << endl;
 }
+
+// Error - uncaught exception (Not a string its a const char *)
+// or
+// No output - Programmer didn't intend for exception to be caught here
 
 // 2. (40 pts; 20 ea) Implement the methods specified given the following class. Assume that all methods
 // are implemented—except for those which you are asked to implement—and work as expected (ask, if
@@ -103,12 +110,29 @@ public:
 // copy.
 // You may assume that your code appears within the body of the class definition.
 
+exam_list(const exam_list &l) : head(0), tail(0)
+{
+    exam_list_node *t;
+    for (t = l.head; t; t = t->next)
+    {
+        insert_tail(t->data);
+    }
+}
+
 //(b) Implement the method insert unique() which inserts d at the tail if and only if d is not
 // already in the list according to the comparitor compare(); that is, insert if for no element in
 // the list does compare() return 0.
 // You may assume that your code appears within the body of the class definition.
 void insert_unique(T d, int (*compare)(const T &, const T &))
 {
+    exam_list_node *t;
+    for (t = head; t && compare(d, t->data); t = t->next)
+    {
+    }
+    if (!t)
+    {
+        insert_tail(d);
+    }
 }
 
 /*
@@ -118,49 +142,54 @@ of these are subtle.
 
 (a) The following line is a valid statement in C++:
 int *i = malloc(12 * sizeof (*i));
-TRUE FALSE
+FALSE
+NEED TO CAST MALLOC TO AN INT
 
 (b) The C compiler handles extern "C" declarations.
-TRUE FALSE
+FALSE
+TELLS C++ TO TURN OFF NAME MANGLING
 
 (c) C++ does not allow name mangling.
-TRUE FALSE
+FALSE
 
 (d) Destructors for derived classes are called in the same order as the constructors.
-TRUE FALSE
+FALSE
+REVERSED ORDER
 
 (e) Overloaded functions share both names and formal parameters.
-TRUE FALSE
+FALSE
 
 (f) Overloaded functions may differ only in return type.
-TRUE FALSE
+FALSE
 
 (g) Function overloading requires name mangling
-TRUE FALSE
+TRUE
 
 (h) Exceptions may be of any type.
-TRUE FALSE
+TRUE
 
 (i) You can compile any C program with a C++ compiler.
-TRUE FALSE
+FALSE
 
 (j) You must always use new and delete when working with dynamic memory.
-TRUE FALSE
+FALSE
+CAN ALSO USE MALLOC AND FREE
 
 (k) Polymorphism is a dynamic concept.
-TRUE FALSE
+TRUE
 
 (l) C and C++ use different calling conventions by default, but it’s still possible to link them together.
-TRUE FALSE
+TRUE
 
 (m) C++ has first-class static dispatch.
-TRUE FALSE
+TRUE
 
 (n) C++ has first-class dynamic dispatch.
-TRUE FALSE
+TRUE
+RUNTIME CAN DECIDE WHICH FUNCTION TO CALL BASED ON DYNAMIC TYPE OF ILLICIT PARAMETER
 
 (o) C++ has first-class double dispatch.
-TRUE FALSE
+FALSE
 
 
 */
