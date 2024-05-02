@@ -1,11 +1,11 @@
 commit 3f5c6478ba9b4041b52adfdffaea9dcd34702c7c (HEAD -> main, origin/main, origin/HEAD)
 Author: Mgelineau <gelineau1234321@gmail.com>
-Date:   Wed Apr 10 17:46:09 2024 -0500
+Date:   Wed Apr 17 17:46:09 2024 -0500
 
-    Added in wild pokemon and gave trainers pokemon
+    User can now use items from bag and fight and capture wild pokemon
 
 commit 809ab8a97f5c6b9179343a6a7f402116f32d817a
 Author: Mgelineau <gelineau1234321@gmail.com>
-Date:   Tue Apr 9 22:07:34 2024 -0500
+Date:   Tue Apr 16 22:07:34 2024 -0500
 
-    Users can now choose a pokemon
+    Users can now battle trainers
