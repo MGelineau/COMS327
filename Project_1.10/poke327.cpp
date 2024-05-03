@@ -762,6 +762,7 @@ void new_hiker()
            pos[dim_y] < 3 || pos[dim_y] > MAP_Y - 4);
 
   world.cur_map->cmap[pos[dim_y]][pos[dim_x]] = c = new npc;
+  c->coins = (rand() % 6) + 1;
   c->pos[dim_y] = pos[dim_y];
   c->pos[dim_x] = pos[dim_x];
   c->ctype = char_hiker;
@@ -790,6 +791,7 @@ void new_rival()
            pos[dim_y] < 3 || pos[dim_y] > MAP_Y - 4);
 
   world.cur_map->cmap[pos[dim_y]][pos[dim_x]] = c = new npc;
+  c->coins = (rand() % 6) + 1;
   c->pos[dim_y] = pos[dim_y];
   c->pos[dim_x] = pos[dim_x];
   c->ctype = char_rival;
@@ -815,6 +817,7 @@ void new_swimmer()
            world.cur_map->cmap[pos[dim_y]][pos[dim_x]]);
 
   world.cur_map->cmap[pos[dim_y]][pos[dim_x]] = c = new npc;
+  c->coins = (rand() % 6) + 1;
   c->pos[dim_y] = pos[dim_y];
   c->pos[dim_x] = pos[dim_x];
   c->ctype = char_swimmer;
@@ -842,6 +845,7 @@ void new_char_other()
            pos[dim_y] < 3 || pos[dim_y] > MAP_Y - 4);
 
   world.cur_map->cmap[pos[dim_y]][pos[dim_x]] = c = new npc;
+  c->coins = (rand() % 6) + 1;
   c->pos[dim_y] = pos[dim_y];
   c->pos[dim_x] = pos[dim_x];
   c->ctype = char_other;

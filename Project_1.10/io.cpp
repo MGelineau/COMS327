@@ -883,6 +883,16 @@ bool io_item(int item)
     return false;
   }
 
+  else if(item == 3){
+    if (world.pc.items[3] > 0){
+      world.pc.items[3]--;
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
   else
   {
     if (world.pc.items[2] > 0)
@@ -1023,6 +1033,7 @@ void io_bag()
     mvprintw(17, 3, "Cyanide Dart (x%d)", world.pc.items[3]);
     mvprintw(18, 3, "BrassKnuckles (x%d)", world.pc.items[4]);
     mvprintw(19, 3, "Guns (x%d)", world.pc.items[5]);
+    mvprintw(20, 3, "Pokeballs (x%d)", world.pc.items[0]);
     mvprintw(24, 3, "[q] to exit");
 
     char action = getch();
@@ -1053,7 +1064,7 @@ void io_bag()
       }
       break;
 
-      case 'q':
+    case 'q':
       return;
       clear();
       go = false;
@@ -1063,11 +1074,45 @@ void io_bag()
   }
 }
 
+bool io_rob()
+{
+  if (world.pc.items[5] == 1)
+  {
+    int rob;
+    rob = (rand() % 99) + 1;
+    
+    if (rob > 9)
+    {
+      return true;
+    }
+  }
+  else if (world.pc.items[4] == 1)
+  {
+    int rob;
+    rob = (rand() % 99) + 1;
+    if (rob > 39)
+    {
+      return true;
+    }
+  }
+  else
+  {
+    int rob;
+    rob = (rand() % 99) + 1;
+    if (rob > 69)
+    {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 void io_battle(character *aggressor, character *defender)
 {
 
   // TODO REMOVE
-  return;
+  // return;
 
   npc *n = (npc *)((aggressor == &world.pc) ? defender : aggressor);
   bool fight = true;
@@ -1118,8 +1163,12 @@ void io_battle(character *aggressor, character *defender)
     mvprintw(5, 50, "[s] Switch Pokemon: ");
 
     mvprintw(11, 0, "Items: ");
+    mvprintw(11, 50, "[m] Mug Trainer");
     mvprintw(12, 3, "[r] Revive (x%d)", world.pc.items[1]);
     mvprintw(13, 3, "[p] Potion (x%d)", world.pc.items[2]);
+    mvprintw(14, 3, "[c] Cyanide Darts (x%d)", world.pc.items[3]);
+    mvprintw(15, 3, "Guns (x%d)", world.pc.items[5]);
+    mvprintw(16, 3, "Brass Knuckles (x%d)", world.pc.items[4]);
 
     char action = getch();
     switch (action)
@@ -1181,6 +1230,60 @@ void io_battle(character *aggressor, character *defender)
         mvprintw(18, 25, "Successfully revived");
       }
       break;
+    case 'c':
+    bool succ;
+    succ = io_item(3);
+    if(succ){
+      mvprintw(18, 25, "What a shot!  They dropped to the floor, would you like to rob them while you're here?[y] [n]");
+      char inpt = getch();
+      switch(inpt){
+        case 'y':
+        mvprintw(19, 25, "Successfully Mugged them! You gained %d Coins!", n->coins);
+        world.pc.coins += n->coins;
+        n->coins = 0;
+        fight = false;
+        break;
+        case 'n':
+        fight = false;
+        break;
+      }
+    }
+    else{
+      mvprintw(18, 25, "You're out of darts!");
+    }
+    break;
+    case 'm':
+      bool success;
+      success = io_rob();
+      if (success)
+      {
+        mvprintw(18, 25, "Successfully Mugged them! You gained %d Coins!", n->coins);
+        world.pc.coins += n->coins;
+        n->coins = 0;
+        mvprintw(20, 25, "Would you like to continue the battle?  You can no longer gain any coins from this trainer. [y][n]");
+        char inpt = getch();
+        switch (inpt)
+        {
+        case 'y':
+        mvprintw(20, 25, "Good Luck!                                                                                           ");
+          break;
+        case 'n':
+          fight = false;
+          break;
+        }
+      }
+      else{
+        mvprintw(18, 25, "Oh no! You got pummeled and lost %d Coins!", n->coins);
+        if(world.pc.coins - n->coins < 0){
+          world.pc.coins = 0;
+        }
+        else{
+          world.pc.coins -= n->coins;
+        }
+        mvprintw(20, 25, "Don't worry, you can keep fighting!");
+        break;
+      }
+      break;
     }
 
     if (pokeNpc->get_health() == 0)
@@ -1189,6 +1292,8 @@ void io_battle(character *aggressor, character *defender)
       if (npcIndex == 6 || n->buddy[npcIndex] == NULL)
       {
         n->defeated = 1;
+        mvprintw(18, 25, "Nice! You gained %d Coins!", n->coins);
+        world.pc.coins += n->coins;
         fight = false;
       }
 

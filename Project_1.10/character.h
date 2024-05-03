@@ -58,7 +58,7 @@ class pc : public character {
   virtual ~pc() {}
 
 
-  int items[5];
+  int items[6];
 };
 
 /* character is defined in poke327.h to allow an instance of character
